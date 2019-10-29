@@ -1,18 +1,34 @@
-import {COMMA, ENTER} from '@angular/cdk/keycodes';
-import {Component, ElementRef, ViewChild} from '@angular/core';
-import {FormControl} from '@angular/forms';
-import {MatAutocompleteSelectedEvent, MatAutocomplete} from '@angular/material/autocomplete';
-import {MatChipInputEvent} from '@angular/material/chips';
-import {Observable} from 'rxjs';
-import {map, startWith} from 'rxjs/operators';
+import { COMMA, ENTER } from "@angular/cdk/keycodes";
+import { Component, ElementRef, ViewChild } from "@angular/core";
+import { FormControl } from "@angular/forms";
+import {
+  MatAutocompleteSelectedEvent,
+  MatAutocomplete
+} from "@angular/material/autocomplete";
+import { MatChipInputEvent } from "@angular/material/chips";
+import { Observable } from "rxjs";
+import { map, startWith } from "rxjs/operators";
+import faker from "faker";
+
+function generateCatalog() {
+  faker.seed(123);
+  let catalog = [];
+  for (let i = 0; i < 20; i++) {
+    const product = faker.commerce.product();
+    const color = faker.commerce.color();
+    const adjective = faker.commerce.productAdjective();
+    catalog.push({ product, color, adjective });
+  }
+  return catalog;
+}
 
 /**
  * @title Chips Autocomplete
  */
 @Component({
-  selector: 'chips-autocomplete-example',
-  templateUrl: 'chips-autocomplete-example.html',
-  styleUrls: ['chips-autocomplete-example.css'],
+  selector: "chips-autocomplete-example",
+  templateUrl: "chips-autocomplete-example.html",
+  styleUrls: ["chips-autocomplete-example.css"]
 })
 export class ChipsAutocompleteExample {
   visible = true;
@@ -22,16 +38,30 @@ export class ChipsAutocompleteExample {
   separatorKeysCodes: number[] = [ENTER, COMMA];
   fruitCtrl = new FormControl();
   filteredItems: Observable<string[]>;
-  selectedItems: string[] = ['Lemon'];
-  allSelectedItems: string[] = ['Apple', 'Lemon', 'Lime', 'Orange', 'Strawberry'];
+  selectedItems: string[] = ["Lemon"];
 
-  @ViewChild('fruitInput', {static: false}) fruitInput: ElementRef<HTMLInputElement>;
-  @ViewChild('auto', {static: false}) matAutocomplete: MatAutocomplete;
+  // allSelectedItems: string[] = [
+  //   "Apple",
+  //   "Lemon",
+  //   "Lime",
+  //   "Orange",
+  //   "Strawberry"
+  // ];
+
+  catalog = generateCatalog();
+
+  @ViewChild("fruitInput", { static: false }) fruitInput: ElementRef<
+    HTMLInputElement
+  >;
+  @ViewChild("auto", { static: false }) matAutocomplete: MatAutocomplete;
 
   constructor() {
     this.filteredItems = this.fruitCtrl.valueChanges.pipe(
-        startWith(null),
-        map((fruit: string | null) => fruit ? this._filter(fruit) : this.allSelectedItems.slice()));
+      startWith(null),
+      map((fruit: string | null) =>
+        fruit ? this._filter(fruit) : this.getKeywords().slice()
+      )
+    );
   }
 
   add(event: MatChipInputEvent): void {
@@ -42,13 +72,13 @@ export class ChipsAutocompleteExample {
       const value = event.value;
 
       // Add our fruit
-      if ((value || '').trim()) {
+      if ((value || "").trim()) {
         this.selectedItems.push(value.trim());
       }
 
       // Reset the input value
       if (input) {
-        input.value = '';
+        input.value = "";
       }
 
       this.fruitCtrl.setValue(null);
@@ -65,13 +95,27 @@ export class ChipsAutocompleteExample {
 
   selected(event: MatAutocompleteSelectedEvent): void {
     this.selectedItems.push(event.option.viewValue);
-    this.fruitInput.nativeElement.value = '';
+    this.fruitInput.nativeElement.value = "";
     this.fruitCtrl.setValue(null);
+  }
+
+  getKeywords() {
+    const keywords = new Set<string>();
+    
+    for(var item of this.catalog) {
+      keywords.add(item.product.toLowerCase());
+      keywords.add(item.color.toLowerCase());
+      keywords.add(item.adjective.toLowerCase());
+    }
+
+    return Array.from(keywords.keys()).sort();
   }
 
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
 
-    return this.allSelectedItems.filter(fruit => fruit.toLowerCase().indexOf(filterValue) === 0);
+    return this.getKeywords().filter(
+      fruit => fruit.toLowerCase().indexOf(filterValue) === 0
+    );
   }
 }

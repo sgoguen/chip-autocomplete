@@ -20,7 +20,9 @@
   </mat-chip-list>
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
     <mat-option *ngFor="let selectedItem of filteredItems | async" [value]="selectedItem">
-      X: {{selectedItem}}
+      {{selectedItem}}
     </mat-option>
   </mat-autocomplete>
 </mat-form-field>
+
+<pre>{{ catalog | json }}</pre>
