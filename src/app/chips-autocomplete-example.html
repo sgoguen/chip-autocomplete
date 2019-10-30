@@ -25,4 +25,6 @@
   </mat-autocomplete>
 </mat-form-field>
 
-<pre>{{ catalog | json }}</pre>
+<div>Filtered: {{ (filteredItems | async).length }}</div>
+
+<pre>{{ catalog.foundProducts | async | json }}</pre>
