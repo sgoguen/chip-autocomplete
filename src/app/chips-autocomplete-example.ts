@@ -7,6 +7,7 @@ import {
 } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { Catalog } from './catalog';
+import { ProductDescriptionModel } from './product-description-model';
 
 /**
  * @title Chips Autocomplete
@@ -17,6 +18,9 @@ import { Catalog } from './catalog';
   styleUrls: ['chips-autocomplete-example.css']
 })
 export class ChipsAutocompleteExample {
+
+  public product = new ProductDescriptionModel();
+
   visible = true;
   selectable = true;
   removable = true;
