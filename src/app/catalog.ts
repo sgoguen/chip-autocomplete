@@ -53,7 +53,7 @@ export function hasKeywords(item: Product, searchKeywords: string[]): boolean {
 }
 
 export function generateCatalog(): Product[] {
-    faker.seed(123);
+    // faker.seed(123);
     const catalog = [];
     for (let id = 1; id <= 100; id++) {
         const product = faker.commerce.product();
